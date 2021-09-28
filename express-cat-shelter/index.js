@@ -1,9 +1,17 @@
 const express = require('express');
 const path = require('path');
+const fs = require('fs');
+const handlebars = require('express-handlebars');
 
 const catController = require('./controllers/catController.js');
 const requestLogger = require('./middlewares/requestLoggerMiddlewares.js');
+
 const app = express();
+
+app.engine('hbs', handlebars({
+    extname: 'hbs',
+}));
+app.set('view engine', 'hbs');
 
 app.use(express.static('./public'));
 
@@ -14,28 +22,31 @@ app.use(express.static('./public'));
 app.use('/cats', catController);
 
 app.get('/', (req, res) => {
+    // Custom HTML response
     // let absolutePath = path.join(__dirname, '/views/home/index.html');
-    let absolutePath = path.resolve(__dirname, './views/home/index.html');
+    // let absolutePath = path.resolve(__dirname, './views/home/index.html');
 
-    res.sendFile(absolutePath);
+    // res.sendFile(absolutePath);
+
+    // render with handlebars
+    res.render('home');
 });
 
-app.get('/addBreed', (req, res) => {
-    res.header({
-        'Content-Type': 'text/html'
-    });
-
-    res.write('<h1>Add Breed</h1>');
-    res.end();
+app.get('/add-breed', (req, res) => {
+    res.render('addBreed');
 });
 
-app.get('/addCat', (req, res) => {
-    res.header({
-        'Content-Type': 'text/html'
-    });
+app.get('/add-cat/:catName?', (req, res) => {
+    let breeds = [
+        {breed: 'Persian'},
+        {breed: 'Angora'},
+        {breed: 'StreetAndBeauty'},
+    ];
 
-    res.write('<h1>Add Cat</h1>');
-    res.end();
+    res.render('addCat', {
+        name: req.params.catName,
+        breeds
+    });
 });
 
 app.get('/download', (req, res) => {
