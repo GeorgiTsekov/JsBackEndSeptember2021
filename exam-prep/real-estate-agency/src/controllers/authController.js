@@ -17,7 +17,7 @@ router.post('/login', async (req, res) => {
         });
 
         res.cookie(AUTH_COOKIE_NAME, token);
-        
+
         res.redirect('/');
     } catch (error) {
         // return error
@@ -46,11 +46,24 @@ router.post('/register', async (req, res) => {
             password,
         });
 
+        let token = await authService.login({
+            username,
+            password
+        });
+        
+        res.cookie(AUTH_COOKIE_NAME, token);
+
         res.redirect('/');
 
     } catch (error) {
         // return error
     }
+});
+
+router.get('/logout', (req, res) => {
+    res.clearCookie(AUTH_COOKIE_NAME);
+
+    res.redirect('/');
 });
 
 module.exports = router;
