@@ -2,8 +2,10 @@ const router = require('express').Router();
 
 const housingService = require('../services/housingService');
 
-router.get('/', (req, res) => {
-    res.render('housing');
+router.get('/', async (req, res) => {
+    let housings = await housingService.getAll();
+
+    res.render('housing', {housings});
 });
 
 router.get('/create', (req, res) => {
@@ -13,7 +15,8 @@ router.get('/create', (req, res) => {
 router.post('/create', async (req, res) => {
     let { name, type, year, city, image, description, availablePieces } = req.body;
 
-    await housingService.create({name, type, year, city, image, description, availablePieces});
+    let owner = req.user._id;
+    await housingService.create({ name, type, year, city, image, description, availablePieces, owner });
 
     res.redirect('/housing');
 });

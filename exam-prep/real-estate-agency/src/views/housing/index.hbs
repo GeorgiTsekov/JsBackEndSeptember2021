@@ -3,20 +3,13 @@
     <section id="all-listings">
         <h1>Apartments for recents</h1>
         <!-- If there are offers for housing in the database display each of them -->
-
-        <div class="card">
-            <h3>Real House Luxury Villa</h3>
-            <p>Spacious and grand villa, 3 bedroom, 2 bath.</p>
-
-            <div class="cta-container"><a href="#" class="det-link">Details</a></div>
-            <div class="card_circle"><img src="./static/images/5.jpg"></div>
-
-        </div>
-
+        {{#each housings}}
+        {{> housing-card}}
+        {{else}}
         <!-- If there are still no offers for housing in the database display: -->
-        <!--<div class="no-data-listing">
-                    <p class="no-offer">There are no housing offers found...</p>
-                </div>-->
-
+        <div class="no-data-listing">
+            <p class="no-offer">There are no housing offers found...</p>
+        </div>
+        {{/each}}
     </section>
 </main>
