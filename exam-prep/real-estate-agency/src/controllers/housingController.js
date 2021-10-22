@@ -53,6 +53,22 @@ router.get('/:housingId/delete', isAuth, async (req, res) => {
     }
 
     res.redirect('/housing');
-})
+});
+
+router.get('/:housingId/edit', isAuth, async (req, res) => {
+    let housing = await housingService.getOne(req.params.housingId);
+    let housingData = await housing.toObject();
+    let isOwner = housingData.owner == req.user?._id;
+
+    if (isOwner) {
+        res.render('housing/edit', { ...housingData });
+    }
+});
+
+router.post('/:housingId/edit', isAuth, async (req, res) => {
+    await housingService.edit(req.params.housingId, req.body);
+
+    res.redirect(`/housing/${req.params.housingId}/details`);
+});
 
 module.exports = router;

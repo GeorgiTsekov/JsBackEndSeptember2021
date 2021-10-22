@@ -21,3 +21,5 @@ exports.addTenant = async (housingId, userId) => {
 }
 
 exports.delete = (housingId) => Housing.findByIdAndDelete(housingId);
+
+exports.edit = (housingId, data) => Housing.findByIdAndUpdate(housingId, data);
