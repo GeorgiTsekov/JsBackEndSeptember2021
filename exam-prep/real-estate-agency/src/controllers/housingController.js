@@ -15,12 +15,16 @@ router.get('/create', isAuth, (req, res) => {
 });
 
 router.post('/create', isAuth, async (req, res) => {
-    let { name, type, year, city, image, description, availablePieces } = req.body;
+    try {
+        let { name, type, year, city, image, description, availablePieces } = req.body;
 
-    let owner = req.user._id;
-    await housingService.create({ name, type, year, city, image, description, availablePieces, owner });
+        let owner = req.user._id;
+        await housingService.create({ name, type, year, city, image, description, availablePieces, owner });
 
-    res.redirect('/housing');
+        res.redirect('/housing');
+    } catch (error) {
+        res.render('housing/create', { error: error.message })
+    }
 });
 
 router.get('/:housingId/details', async (req, res) => {
@@ -37,38 +41,56 @@ router.get('/:housingId/details', async (req, res) => {
     res.render('housing/details', { ...housingData, isOwner, tenants, isAvailable, isRented });
 });
 
-router.get('/:housingId/rent', async (req, res) => {
+router.get('/:housingId/rent', isOwner, async (req, res) => {
     await housingService.addTenant(req.params.housingId, req.user?._id);
 
     res.redirect(`/housing/${req.params.housingId}/details`);
 });
 
-router.get('/:housingId/delete', isAuth, async (req, res) => {
-    let housing = await housingService.getOne(req.params.housingId);
-    let housingData = await housing.toObject();
-    let isOwner = housingData.owner == req.user?._id;
-
-    if (isOwner) {
-        await housingService.delete(req.params.housingId);
-    }
+router.get('/:housingId/delete', isntOwner, async (req, res) => {
+    await housingService.delete(req.params.housingId);
 
     res.redirect('/housing');
 });
 
-router.get('/:housingId/edit', isAuth, async (req, res) => {
+router.get('/:housingId/edit', isntOwner, async (req, res) => {
     let housing = await housingService.getOne(req.params.housingId);
     let housingData = await housing.toObject();
-    let isOwner = housingData.owner == req.user?._id;
+    
+    res.render('housing/edit', { ...housingData });
+});
 
-    if (isOwner) {
-        res.render('housing/edit', { ...housingData });
+router.post('/:housingId/edit', isntOwner, async (req, res) => {
+    try {
+        await housingService.edit(req.params.housingId, req.body);
+
+        res.redirect(`/housing/${req.params.housingId}/details`);
+    }
+    catch (error) {
+        res.render('housing/create', { error: error.message });
     }
 });
 
-router.post('/:housingId/edit', isAuth, async (req, res) => {
-    await housingService.edit(req.params.housingId, req.body);
+async function isOwner(req, res, next) {
+    let housing = await housingService.getOne(req.params.housingId);
+    let housingData = await housing.toObject();
 
-    res.redirect(`/housing/${req.params.housingId}/details`);
-});
+    if (housingData.owner == req.user?._id) {
+        res.redirect(`/housing/${req.params.housingId}/details`);
+    } else {
+        next();
+    }
+}
+
+async function isntOwner(req, res, next) {
+    let housing = await housingService.getOne(req.params.housingId);
+    let housingData = await housing.toObject();
+
+    if (housingData.owner != req.user?._id) {
+        res.redirect(`/housing/${req.params.housingId}/details`);
+    } else {
+        next();
+    }
+}
 
 module.exports = router;
