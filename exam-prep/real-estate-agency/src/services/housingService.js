@@ -19,3 +19,5 @@ exports.addTenant = async (housingId, userId) => {
 
     // return Housing.findOneAndUpdate({ _id: housingId }, { $push: { tenants: userId }, $inc: { availablePieces: -1 } });
 }
+
+exports.delete = (housingId) => Housing.findByIdAndDelete(housingId);

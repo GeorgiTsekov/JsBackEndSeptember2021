@@ -43,4 +43,16 @@ router.get('/:housingId/rent', async (req, res) => {
     res.redirect(`/housing/${req.params.housingId}/details`);
 });
 
+router.get('/:housingId/delete', isAuth, async (req, res) => {
+    let housing = await housingService.getOne(req.params.housingId);
+    let housingData = await housing.toObject();
+    let isOwner = housingData.owner == req.user?._id;
+
+    if (isOwner) {
+        await housingService.delete(req.params.housingId);
+    }
+
+    res.redirect('/housing');
+})
+
 module.exports = router;
