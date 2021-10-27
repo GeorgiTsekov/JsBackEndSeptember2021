@@ -4,6 +4,7 @@ const housingSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
+        minlength: 6,
     },
     type: {
         type: String,
@@ -13,22 +14,30 @@ const housingSchema = new mongoose.Schema({
     year: {
         type: Number,
         required: true,
+        min: 1850,
+        max: 2021,
     },
     city: {
         type: String,
         required: true,
+        minlength: 4,
+        maxlength: 4,
     },
     image: {
         type: String,
         required: true,
+        validate: [/^https?:\/\/.+/i, 'Invalid image url!'],
     },
     description: {
         type: String,
         required: true,
+        maxlength: 60,
     },
     availablePieces: {
         type: Number,
         required: true,
+        min: 0,
+        max: 10,
     },
     tenants: [
         {

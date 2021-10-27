@@ -56,7 +56,7 @@ router.get('/:housingId/delete', isntOwner, async (req, res) => {
 router.get('/:housingId/edit', isntOwner, async (req, res) => {
     let housing = await housingService.getOne(req.params.housingId);
     let housingData = await housing.toObject();
-    
+
     res.render('housing/edit', { ...housingData });
 });
 
@@ -67,7 +67,7 @@ router.post('/:housingId/edit', isntOwner, async (req, res) => {
         res.redirect(`/housing/${req.params.housingId}/details`);
     }
     catch (error) {
-        res.render('housing/create', { error: error.message });
+        res.render('housing/edit', { error: error.message });
     }
 });
 

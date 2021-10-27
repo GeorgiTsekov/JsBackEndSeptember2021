@@ -17,9 +17,19 @@ exports.addTenant = async (housingId, userId) => {
 
     return housing.save();
 
-    // return Housing.findOneAndUpdate({ _id: housingId }, { $push: { tenants: userId }, $inc: { availablePieces: -1 } });
+    // return Housing.findOneAndUpdate(
+    //     { _id: housingId },
+    //     {
+    //         $push: { tenants: userId },
+    //         $inc: { availablePieces: -1 },
+    //     },
+    //     { runValidators: true }
+    // );
 }
 
 exports.delete = (housingId) => Housing.findByIdAndDelete(housingId);
 
-exports.edit = (housingId, data) => Housing.findByIdAndUpdate(housingId, data);
+exports.edit = (housingId, data) => Housing.findByIdAndUpdate(housingId, data, { runValidators: true });
+
+// exports.search = (searchedText) => Housing.find({ type: searchedText }).lean();
+exports.search = (searchedText) => Housing.find({ type: { $regex: searchedText, $options: 'i' } }).lean();

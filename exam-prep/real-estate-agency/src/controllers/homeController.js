@@ -8,4 +8,14 @@ router.get('/', async (req, res) => {
     res.render('home', { housings });
 });
 
+router.get('/search', async (req, res) => {
+    let searchedText = req.query?.text;
+    if (!searchedText) {
+        searchedText = '';
+    }
+    let housings = await housingService.search(searchedText);
+
+    res.render('search', { title: 'Search Housing', housings });
+});
+
 module.exports = router;
