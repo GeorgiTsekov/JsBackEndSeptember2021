@@ -4,7 +4,7 @@ const jwt = require('jsonwebtoken');
 exports.register = ({ email, password }) => User.create({ email, password });
 
 exports.login = async ({ email, password }) => {
-    let user = await User.findOne({ email });
+    let user = await User.findOne({ email, password });
     if (user) {
         let token = jwt.sign({ _id: user._id, email: user.email }, 'SECRETSOMETHING');
 
