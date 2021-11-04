@@ -1,0 +1,2 @@
+exports.SECRET = '3GD8957897123321238FD0G4';
+exports.TOKEN_COOKIE_NAME = 'jwt_token';

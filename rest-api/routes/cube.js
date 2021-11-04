@@ -1,6 +1,6 @@
 const { Router } = require('express');
 
-const Cube = require('./models/Cube');
+const Cube = require('../models/Cube');
 
 const router = Router();
 
@@ -43,5 +43,17 @@ router.delete('/delete', async (req, res) => {
         message: 'Cube is deleted successfully'
     });
 });
+
+router.patch('/edit/:id', async (req, res) => {
+    const { name, description, imageUrl, difficulty } = req.body;
+
+    const id = req.params.id;
+
+    await Cube.findByIdAndUpdate(id, { name, description, imageUrl, difficulty });
+
+    res.status(200).json({
+        message: 'Cube is updated successfully'
+    });
+})
 
 module.exports = router;
